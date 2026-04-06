@@ -6,22 +6,23 @@ import {UpgradeableBeacon} from "@openzeppelin/contracts/proxy/beacon/Upgradeabl
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 
 contract VersionManager is Ownable {
-    UpgradeableBeacon public beacon;        // Ссылка на текущий Beacon
-    address[] public versionHistory;        // История адресов реализаций
-    uint256 public currentVersionIndex;     // Индекс активной версии
+    UpgradeableBeacon public beacon; // Ссылка на текущий Beacon
+    address[] public versionHistory; // История адресов реализаций
+    uint256 public currentVersionIndex; // Индекс активной версии
 
     event Upgraded(address indexed implementation, uint256 newIndex);
     event RolledBack(address indexed implementation, uint256 toIndex);
 
-constructor(address initialImplementation) Ownable(msg.sender) {
-    beacon = new UpgradeableBeacon(initialImplementation, address(this));
-    versionHistory.push(initialImplementation);
-    currentVersionIndex = 0;
-}
+    constructor(address initialImplementation) Ownable(msg.sender) {
+        beacon = new UpgradeableBeacon(initialImplementation, address(this));
+        versionHistory.push(initialImplementation);
+        currentVersionIndex = 0;
+    }
+
     /// @notice Апгрейд логики: добавляем версию в историю и меняем Beacon.
     function upgradeTo(address newImplementation) public onlyOwner {
         require(newImplementation != address(0), "VersionManager: zero implementation");
-        require(newImplementation.code.length > 0, "VersionManager: not a contract"); 
+        require(newImplementation.code.length > 0, "VersionManager: not a contract");
         beacon.upgradeTo(newImplementation);
         versionHistory.push(newImplementation);
         currentVersionIndex = versionHistory.length - 1;
@@ -42,6 +43,6 @@ constructor(address initialImplementation) Ownable(msg.sender) {
     }
 
     function currentImplementation() external view returns (address) {
-    return versionHistory[currentVersionIndex];
-}
+        return versionHistory[currentVersionIndex];
+    }
 }

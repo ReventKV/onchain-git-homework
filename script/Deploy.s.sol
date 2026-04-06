@@ -16,10 +16,7 @@ contract Deploy is Script {
         MyTokenV1 impl = new MyTokenV1();
         VersionManager manager = new VersionManager(address(impl));
 
-        bytes memory initData = abi.encodeCall(
-            MyTokenV1.initialize,
-            ("Beacon Token", "BKN")
-        );
+        bytes memory initData = abi.encodeCall(MyTokenV1.initialize, ("Beacon Token", "BKN"));
 
         BeaconProxy proxyContract = new BeaconProxy(address(manager.beacon()), initData);
 

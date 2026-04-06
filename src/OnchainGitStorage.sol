@@ -2,8 +2,7 @@
 pragma solidity ^0.8.20;
 
 library OnchainGitStorage {
-    bytes32 internal constant STORAGE_SLOT =
-        keccak256("onchaingit.storage.erc20.versioning");
+    bytes32 internal constant STORAGE_SLOT = keccak256("onchaingit.storage.erc20.versioning");
 
     struct MainStorage {
         // ERC20-like

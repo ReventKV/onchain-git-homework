@@ -22,14 +22,9 @@ contract UpgradeTest is Test {
 
         manager = new VersionManager(address(implV1));
 
-        bytes memory initData = abi.encodeCall(
-            MyTokenV1.initialize,
-            ("Beacon Token", "BKN")
-        );
+        bytes memory initData = abi.encodeCall(MyTokenV1.initialize, ("Beacon Token", "BKN"));
 
-        proxyToken = MyTokenV1(
-            address(new BeaconProxy(address(manager.beacon()), initData))
-        );
+        proxyToken = MyTokenV1(address(new BeaconProxy(address(manager.beacon()), initData)));
     }
 
     // =========================
@@ -104,14 +99,9 @@ contract UpgradeTest is Test {
 
     // 2. BEACON: ALL PROXIES UPDATE TOGETHER
     function testAllProxiesUpgradeTogether() public {
-        bytes memory initData = abi.encodeCall(
-            MyTokenV1.initialize,
-            ("Token2", "T2")
-        );
+        bytes memory initData = abi.encodeCall(MyTokenV1.initialize, ("Token2", "T2"));
 
-        MyTokenV1 secondProxy = MyTokenV1(
-            address(new BeaconProxy(address(manager.beacon()), initData))
-        );
+        MyTokenV1 secondProxy = MyTokenV1(address(new BeaconProxy(address(manager.beacon()), initData)));
 
         implV2 = new MyTokenV2();
         manager.upgradeTo(address(implV2));
