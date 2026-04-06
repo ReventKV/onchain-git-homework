@@ -20,7 +20,8 @@ constructor(address initialImplementation) Ownable(msg.sender) {
 }
     /// @notice Апгрейд логики: добавляем версию в историю и меняем Beacon.
     function upgradeTo(address newImplementation) public onlyOwner {
-        require(newImplementation.code.length > 0, "Not a contract");
+        require(newImplementation != address(0), "VersionManager: zero implementation");
+        require(newImplementation.code.length > 0, "VersionManager: not a contract"); 
         beacon.upgradeTo(newImplementation);
         versionHistory.push(newImplementation);
         currentVersionIndex = versionHistory.length - 1;
@@ -29,7 +30,7 @@ constructor(address initialImplementation) Ownable(msg.sender) {
 
     /// @notice Откат к ранее сохранённой реализации.
     function rollbackTo(uint256 index) public onlyOwner {
-        require(index < versionHistory.length, "Invalid index");
+        require(index < versionHistory.length, "VersionManager: invalid index");
         address impl = versionHistory[index];
         beacon.upgradeTo(impl);
         currentVersionIndex = index;
@@ -39,4 +40,8 @@ constructor(address initialImplementation) Ownable(msg.sender) {
     function versionsCount() external view returns (uint256) {
         return versionHistory.length;
     }
+
+    function currentImplementation() external view returns (address) {
+    return versionHistory[currentVersionIndex];
+}
 }
